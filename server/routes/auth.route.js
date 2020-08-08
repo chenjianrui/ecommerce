@@ -25,9 +25,9 @@ router.post('/register', [
   }
 
   const { name, email, password } = req.body
-
+  
   try {
-    let user = User.findOne({email})
+    let user = await User.findOne({email})
 
     if(user){
       return res.status(400).json({
@@ -42,7 +42,7 @@ router.post('/register', [
     })
 
     user = new User({ name, email, password, avatar })
-    const salt = await bcrypt.getSalt(10)
+    const salt = await bcrypt.genSalt(10)
     user.password = await bcrypt.hash(password, salt)
     await user.save()
 
