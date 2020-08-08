@@ -6,9 +6,20 @@ const bcrypt = require('bcryptjs') // encrypt password
 const { check, validationResult } = require('express-validator')
 const gravatar = require('gravatar')
 
-
+const auth = require('../middleware/auth')
 // Models
 const User = require('../models/User')
+
+router.get('/', auth, async (req, res) => {
+  try {
+    // 從 DB 抓用戶資料，排除 password
+    const user = await User.findById(req.user.id).select('-password')
+    res.json(user)
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).send('Server error')
+  }
+})
 
 router.post('/register', [
   check('name', 'Name is required').not().isEmpty(),
