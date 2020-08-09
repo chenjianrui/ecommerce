@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+import { connect } from 'react-redux'
 
 import Container from '../components/container/container.component'
 import FormInput from '../components/inputs/formInput.component'
 import Button from '../components/button/button.component'
 
-const Register = () => {
+import { register } from '../data/reducers/auth'
+
+const Register = ({ register }) => {
   const [data, setData] = useState({
     name:'',
     email: '',
@@ -28,7 +31,7 @@ const Register = () => {
     } else if (!name || !email || !password){
       toast.error('Please Fill all fields')
     } else {
-      toast.success('ok')
+      register({name, email, password})
     }
   }
 
@@ -69,9 +72,17 @@ const Register = () => {
           moreStyle='bg-primary text-white w-full mb-3'
           type='submit'
         />
+        <div className='flex justify-end w-full'>
+          <Button 
+            isButton={false}
+            title='already have an account ?'
+            moreStyle='text-gray-600'
+            href='/login'
+          />
+        </div>
       </form>
     </Container>
   )
 }
 
-export default Register
+export default connect(null, { register })(Register)
