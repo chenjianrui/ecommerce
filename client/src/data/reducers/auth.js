@@ -9,6 +9,9 @@ const REGISTER_SUCCESS = 'REGISTER_SUCCESS'
 const REGISTER_FAIL = 'REGISTER_FAIL'
 const USER_LOADED = 'USER_LOADED'
 const AUTH_ERROR = 'AUTH_ERROR'
+export const LOGOUT = 'LOGOUT'
+export const SET_LOADING = 'SET_LOADING'
+
 
 
 // initial state
@@ -16,7 +19,7 @@ const AUTH_ERROR = 'AUTH_ERROR'
 const initialState = {
   token: localStorage.getItem('token'),
   isAuthenticated: null,
-  loading: true,
+  loading: false,
   user: null
 }
 
@@ -40,13 +43,19 @@ export default (state = initialState, action) => {
         isAuthenticated: true,
         loading: false,
       }
+    case SET_LOADING:
+      return {
+        ...state,
+        loading: true
+      }
     case REGISTER_FAIL:
     case AUTH_ERROR:
+    case LOGOUT:
       localStorage.removeItem('token')
       return {
         ...state,
         isAuthenticated: null,
-        loading: true,
+        loading: false,
         token: null
       }
     default:
@@ -82,6 +91,7 @@ export const register = ({name, email, password}) => async dispatch => {
     }
   }
 
+  dispatch({ type:  SET_LOADING})
   const body = JSON.stringify({name, email, password})
   try {
     const res = await axios.post(`${URLDevelopment}/api/user/register`, body, config)
