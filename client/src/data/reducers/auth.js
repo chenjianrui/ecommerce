@@ -7,6 +7,8 @@ import { setAuthToken } from '../../helpers/setAuthToken'
 // Types
 const REGISTER_SUCCESS = 'REGISTER_SUCCESS'
 const REGISTER_FAIL = 'REGISTER_FAIL'
+const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
+const LOGIN_FAIL = 'LOGIN_FAIL'
 const USER_LOADED = 'USER_LOADED'
 const AUTH_ERROR = 'AUTH_ERROR'
 export const LOGOUT = 'LOGOUT'
@@ -36,6 +38,7 @@ export default (state = initialState, action) => {
         loading: false
       }
     case REGISTER_SUCCESS:
+    case LOGIN_SUCCESS:
       localStorage.setItem('token', payload.token)
       return {
         ...state,
@@ -49,6 +52,7 @@ export default (state = initialState, action) => {
         loading: true
       }
     case REGISTER_FAIL:
+    case LOGIN_FAIL:
     case AUTH_ERROR:
     case LOGOUT:
       localStorage.removeItem('token')
@@ -91,17 +95,39 @@ export const register = ({name, email, password}) => async dispatch => {
     }
   }
 
-  dispatch({ type:  SET_LOADING})
+  dispatch({ type: SET_LOADING})
   const body = JSON.stringify({name, email, password})
   try {
     const res = await axios.post(`${URLDevelopment}/api/user/register`, body, config)
     dispatch({ type: REGISTER_SUCCESS, payload: res.data })
-    
+    dispatch(loadUser())
   } catch (error) {
     const errors = error.response.data.errors
     if(errors){
       errors.forEach(err => toast.error(err.msg))
     }
     dispatch({ type: REGISTER_FAIL })
+  }
+}
+
+export const login = ({email, password}) => async dispatch => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+
+  dispatch({ type: SET_LOADING})
+  const body = JSON.stringify({email, password})
+  try {
+    const res = await axios.post(`${URLDevelopment}/api/user/login`, body, config)
+    dispatch({ type: LOGIN_SUCCESS, payload: res.data })
+    dispatch(loadUser())
+  } catch (error) {
+    const errors = error.response.data.errors
+    if(errors){
+      errors.forEach(err => toast.error(err.msg))
+    }
+    dispatch({ type: LOGIN_FAIL })
   }
 }
