@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { useSelector, useDispatch, connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
 import './loading.css'
@@ -11,10 +11,11 @@ import Button from '../components/button/button.component'
 
 import { login } from '../data/reducers/auth'
 
-const Login = ({ login }) => {
+const Login = () => {
   const isLoading = useSelector(state => state.auth.loading)
   const user = useSelector(state => state.auth.user)
   const isAuth = useSelector(state => state.auth.isAuthenticated)
+  const dispatch = useDispatch()
   const [data, setData] = useState({
     email: '',
     password: '',
@@ -30,7 +31,7 @@ const Login = ({ login }) => {
 
   const onSubmit = async e => {
     e.preventDefault();
-    login({email, password})
+    dispatch(login({email, password}))
   }
 
   if(isAuth && user){
@@ -46,7 +47,7 @@ const Login = ({ login }) => {
         <h2 className='font-bold text-3xl text-center mb-5'>Login</h2>
         <FormInput 
           title='Email'
-          placeholder='Nick@example.com'
+          placeholder='nick@example.com'
           type='email'
           value={email}
           handleChange={handleChange('email')}
@@ -79,4 +80,4 @@ const Login = ({ login }) => {
   )
 }
 
-export default connect(null, { login })(Login)
+export default Login

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { connect, useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
 import './loading.css'
@@ -11,10 +11,11 @@ import Button from '../components/button/button.component'
 
 import { register } from '../data/reducers/auth'
 
-const Register = ({ register }) => {
+const Register = () => {
   const isLoading = useSelector(state => state.auth.loading)
   const user = useSelector(state => state.auth.user)
   const isAuth = useSelector(state => state.auth.isAuthenticated)
+  const dispatch = useDispatch()
   const [data, setData] = useState({
     name:'',
     email: '',
@@ -37,7 +38,7 @@ const Register = ({ register }) => {
     } else if (!name || !email || !password){
       toast.error('Please Fill all fields')
     } else {
-      register({name, email, password})
+      dispatch(register({name, email, password}))
 
     }
   }
@@ -55,14 +56,14 @@ const Register = ({ register }) => {
         <h2 className='font-bold text-3xl text-center mb-5'>Register</h2>
         <FormInput 
           title='Name'
-          placeholder='Nick'
+          placeholder='nick'
           type='text'
           value={name}
           handleChange={handleChange('name')}
         />
         <FormInput 
           title='Email'
-          placeholder='Nick@example.com'
+          placeholder='nick@example.com'
           type='email'
           value={email}
           handleChange={handleChange('email')}
@@ -102,4 +103,4 @@ const Register = ({ register }) => {
   )
 }
 
-export default connect(null, { register })(Register)
+export default Register
