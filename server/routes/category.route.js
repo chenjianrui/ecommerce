@@ -5,6 +5,7 @@ const { check, validationResult } = require('express-validator')
 const Category = require('../models/Category')
 const auth = require('../middleware/auth')
 const adminAuth = require('../middleware/adminAuth')
+const categoryById = require('../middleware/categoryById')
 
 router.post('/', [
   check('name', 'Name is required').trim().not().isEmpty()
@@ -39,6 +40,15 @@ router.get('/all', auth, adminAuth, async (req, res) => {
   try {
     let data = await Category.find({})
     res.json(data)
+  } catch (error) {
+    console.log(error)
+    res.status(500).send('Server Error')
+  }
+})
+
+router.get('/:categoryId', categoryById, async (req, res) => {
+  try {
+    res.json(req.category)
   } catch (error) {
     console.log(error)
     res.status(500).send('Server Error')
