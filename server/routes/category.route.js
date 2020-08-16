@@ -55,4 +55,38 @@ router.get('/:categoryId', categoryById, async (req, res) => {
   }
 })
 
+router.put('/:categoryId', auth, adminAuth, categoryById, async (req, res) => {
+  // 從 middleware categoryById 取得該 category
+  // 再從 request body 拿到想 update 的 name
+  let category = req.category
+  const { name } = req.body
+    if(name) {
+      // 使用 trim 去除掉空白字元
+      category.name = name.trim()
+    }
+  try {
+    category = await category.save()
+    res.json(category) 
+  } catch (error) {
+    console.log(error)
+    return res.status(500).send('Server Error')
+  }
+})
+
+router.delete('/:categoryId', auth, adminAuth, categoryById, async (req, res) => {
+  // 從 middleware categoryById 取得該 category
+  let category = req.category
+
+  try {
+    const { name } = category
+    await category.remove();
+    res.json({
+      msg: `${name} deleted successfully`
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).send('Server Error')
+  }
+})
+
 module.exports = router
