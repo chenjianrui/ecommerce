@@ -42,7 +42,6 @@ router.post('/', auth, adminAuth, (req, res) => {
     
     product.photo.data = fs.readFileSync(files.photo.path)
     product.photo.contentType = files.photo.type
-    console.log(name, description, price, category, quantity, shipping)
     try {
       await product.save()
       res.json('Product Created Successfully')
