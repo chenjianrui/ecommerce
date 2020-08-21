@@ -3,6 +3,7 @@ const router = express.Router()
 const fs = require('fs')
 const auth = require('../middleware/auth')
 const adminAuth = require('../middleware/adminAuth')
+const productById = require('../middleware/productById')
 const Product = require('../models/Product')
 const formidable = require('formidable')
 
@@ -50,6 +51,25 @@ router.post('/', auth, adminAuth, (req, res) => {
       res.status(500).send('Server Error')
     }
 
+  })
+})
+
+router.get('/:productId', productById, (req, res) => {
+  // photo 另外拉一個 API 來取得
+  req.product.photo = undefined
+  return res.json(req.product)
+})
+
+router.get('/photo/:productId', productById, (req, res) => {
+  console.log(req.product)
+  if(req.product.photo.data){
+    // 設定內容型別: ex. image/png
+    res.set('Content-Type', req.product.photo.contentType)
+    return res.send(req.product.photo.data)
+  }
+
+  res.status(400).json({
+    error: 'failed to load image'
   })
 })
 
